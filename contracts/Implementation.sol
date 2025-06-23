@@ -60,9 +60,10 @@ contract Implementation{
         console.log("one", index);
         if(!newRoom) require(players[index].length < maxPlayers, "room is full");//房间不是新建的，检查房间人数是否已达上限
         console.log("two");
-        require(isInRoom[msg.sender] != true, "you are already in a room");
+        require(isInRoom[msg.sender] != true, "you are already in a room, can't bet again");
         if(amount > chips[msg.sender]){
             Ichip(token).lock(msg.sender, amount - chips[msg.sender]);
+            chips[msg.sender] = amount;//更新用户总下注额
         }
         console.log("three");
         //更新房间玩家信息，加入玩家
@@ -72,7 +73,6 @@ contract Implementation{
             players[index].push(Player(msg.sender, amount, choice));
         }
         console.log("four");
-        chips[msg.sender] += amount;//更新用户总下注额
         isInRoom[msg.sender] = true;
         //是否已满足开奖条件
         if(roomClosed(index)){
